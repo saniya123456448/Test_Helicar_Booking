@@ -1,39 +1,40 @@
 name: Helicar UI Tests
 
-# WHEN to run:
 on:
   push:
-    branches: [ main ]        # Run automatically when you upload/push code
+    branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:           # Adds a manual "Run workflow" button on GitHub
+  workflow_dispatch:
 
 jobs:
   test:
-    runs-on: ubuntu-latest     # GitHub gives a free Linux computer
+    runs-on: ubuntu-latest
 
     steps:
-
-      # Step 1 — Download your code onto GitHub's computer
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2 — Install Python 3.11
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # Step 3 — Install Google Chrome browser
       - name: Install Chrome
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
 
-      # Step 4 — Install your Python packages (selenium, webdriver-manager, etc.)
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
-      # Step 5 — Run your tests!
       - name: Run Helicar UI Tests
         run: python Test_Helicar_Booking.py
+
+      # ✅ THIS PART SAVES YOUR EXCEL AFTER TESTS RUN
+      - name: Upload Test Results Excel
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Test-Results-Excel
+          path: Test_Cases_Helicar.xlsx
